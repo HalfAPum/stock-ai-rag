@@ -1,4 +1,6 @@
 import argparse
+import time
+import datetime
 from langchain.vectorstores.chroma import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
@@ -45,7 +47,10 @@ def query_rag(query_text: str):
     print(prompt)
 
     model = Ollama(model="llama3")
+    request_time_start = time.time()
     response_text = model.invoke(prompt)
+    request_time_difference = datetime.timedelta(seconds=int((time.time() - request_time_start)))
+    print("--- Llama 3 response time: %s ---" % request_time_difference)
 
     sources = [doc.metadata.get("id", None) for doc, _score in results]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
